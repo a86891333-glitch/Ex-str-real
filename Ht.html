@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Jasteb - EX STR REAL</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; overflow: hidden; }
+  
+  /* INTRO VIDEO 1 MENIT */
+  #intro {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000; z-index: 9999;
+    transition: opacity 2s ease;
+  }
+  #intro video { width: 100%; height: 100%; object-fit: cover; }
+  #skip {
+    position: absolute; bottom: 20px; right: 20px;
+    background: rgba(0,0,0,0.6); color: #fff;
+    border: 1px solid #00aaff; padding: 8px 15px;
+    border-radius: 8px; cursor: pointer; z-index: 10000;
+    box-shadow: 0 0 15px rgba(0,170,255,0.5);
+  }
+  #intro.hide { opacity: 0; pointer-events: none; }
+
+  /* MENU UTAMA */
+  #bg-video {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; z-index: -2;
+    filter: brightness(0.4);
+    pointer-events: none;
+  }
+  .overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(180deg, rgba(0,170,255,0.2) 0%, rgba(255,140,0,0.2) 100%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .container {
+    position: relative; z-index: 10;
+    max-width: 400px; margin: 40px auto;
+    background: rgba(17,17,17,0.9);
+    border: 2px solid #00aaff; border-radius: 15px;
+    padding: 20px; backdrop-filter: blur(8px);
+    opacity: 0; transition: opacity 1.5s ease;
+    box-shadow: 0 0 30px rgba(0,170,255,0.3);
+  }
+  .container.show { opacity: 1; overflow-y: auto; }
+  
+  .logo {
+    text-align: center; font-size: 28px; font-weight: 900;
+    background: linear-gradient(90deg, #00aaff, #ff8800);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(0,170,255,0.5);
+  }
+  .item {
+    background: rgba(26,26,26,0.8); border: 1px solid #333;
+    border-radius: 10px; padding: 12px;
+    display: flex; justify-content: space-between; margin-bottom: 10px;
+    transition: all 0.3s ease;
+  }
+  .item:hover {
+    border-color: #00aaff;
+    box-shadow: 0 0 15px rgba(0,170,255,0.4);
+    transform: translateY(-2px);
+  }
+  .btn {
+    background: linear-gradient(90deg, #00aaff, #ff8800);
+    border: none; color: #fff; padding: 8px 12px;
+    border-radius: 8px; cursor: pointer; font-weight: bold;
+    position: relative; z-index: 11;
+    box-shadow: 0 0 10px rgba(255,136,0,0.5);
+    transition: all 0.2s ease;
+  }
+  .btn:active { transform: scale(0.95); }
+  .qris {
+    display: none; text-align: center; margin-top: 15px;
+    position: relative; z-index: 11;
+    animation: fadeIn 0.5s ease;
+  }
+  @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+  .qris img {
+    width: 200px; height: 200px; background: #fff;
+    padding: 8px; border-radius: 10px; border: 2px solid #00aaff;
+    box-shadow: 0 0 20px rgba(0,170,255,0.6);
+  }
+  
+  /* NOMOR ADMIN BAWAH QRIS */
+  .admin-box-qris {
+    background: rgba(0,170,255,0.1); border: 1px dashed #00aaff;
+    padding: 10px; border-radius: 8px; margin: 12px 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .copy-admin {
+    background: #00aaff; color: #000; border: none;
+    padding: 5px 10px; border-radius: 5px; font-size: 12px;
+    cursor: pointer; font-weight: bold;
+  }
+
+  .btn-channel {
+    width: 100%; padding: 12px; margin-top: 8px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 8px;
+    color: #fff; font-weight: bold; cursor: pointer;
+    position: relative; z-index: 11;
+    transition: all 0.2s ease;
+  }
+  .btn-channel:hover { background: #444; border-color: #00aaff; }
+  .btn-channel:active { transform: scale(0.98); }
+  
+  .btn-copy {
+    width: 100%; padding: 12px; margin-top: 8px;
+    background: #ff8800; border: none; border-radius: 8px;
+    color: #000; font-weight: bold; cursor: pointer;
+    position: relative; z-index: 11;
+    box-shadow: 0 0 15px rgba(255,136,0,0.4);
+    transition: all 0.2s ease;
+  }
+  .btn-copy:active { transform: scale(0.98); }
+  .note { font-size: 11px; color: #aaa; text-align: center; margin-top: 10px; }
+
+  /* POPUP TUTORIAL */
+  .tutorial {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+    z-index: 999; justify-content: center; align-items: center;
+    backdrop-filter: blur(5px);
+  }
+  .tutorial-box {
+    background: #111; border: 2px solid #00aaff;
+    border-radius: 15px; padding: 20px; max-width: 350px;
+    text-align: left;
+    box-shadow: 0 0 30px rgba(0,170,255,0.5);
+    animation: popIn 0.3s ease;
+  }
+  @keyframes popIn { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+  .tutorial-box h3 { color: #00ff88; text-align: center; margin-bottom: 10px; text-shadow: 0 0 8px rgba(0,255,136,0.5); }
+  .tutorial-box ol { padding-left: 20px; color: #ccc; line-height: 1.8; }
+  .tutorial-box li b { color: #ff8800; }
+  .btn-close {
+    width: 100%; padding: 10px; margin-top: 15px;
+    background: linear-gradient(90deg, #00aaff, #ff8800);
+    border: none; border-radius: 8px; color: #fff;
+    font-weight: bold; cursor: pointer; font-size: 15px;
+    box-shadow: 0 0 15px rgba(0,170,255,0.5);
+  }
+</style>
+</head>
+<body>
+
+  <!-- 1. VIDEO INTRO 1 MENIT -->
+  <div id="intro">
+    <video autoplay muted playsinline id="intro-video">
+      <source src="https://files.catbox.moe/yvvu4w.mp4" type="video/mp4">
+    </video>
+    <button id="skip" onclick="skipIntro()">Lewati</button>
+  </div>
+
+  <!-- 2. BACKGROUND MENU -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="https://files.catbox.moe/yvvu4w.mp4" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+
+  <!-- 3. MENU UTAMA -->
+  <div class="container" id="menu">
+    <div class="logo">EX STR REAL</div>
+    <p style="text-align:center; color:#ccc; font-size:12px;">Jasteb Cepat ⚡</p>
+    
+    <div class="item"><span>Rp 2.000 → 35 ress</span><button class="btn" onclick="order('2000', '35 ress')">Order</button></div>
+    <div class="item"><span>Rp 3.000 → 40 ress</span><button class="btn" onclick="order('3000', '40 ress')">Order</button></div>
+    <div class="item"><span>Rp 5.000 → 55 ress</span><button class="btn" onclick="order('5000', '55 ress')">Order</button></div>
+    <div class="item"><span>Rp 7.000 → 75 ress</span><button class="btn" onclick="order('7000', '75 ress')">Order</button></div>
+    <div class="item"><span>Rp 10.000 → 100 ress</span><button class="btn" onclick="order('10000', '100 ress')">Order</button></div>
+
+    <div class="qris" id="qris">
+      <h3 style="color:#00ff88">Scan QRIS Untuk Bayar</h3>
+      <img src="https://files.catbox.moe/1m7i0b.png">
+      <p id="paket" style="font-weight:bold;"></p>
+
+      <!-- NOMOR ADMIN PINDAH KE SINI -->
+      <div class="admin-box-qris">
+        <span>Admin: 081328853561</span>
+        <button class="copy-admin" onclick="copyAdmin()">Salin</button>
+      </div>
+
+      <!-- TEKS UDAH DIGANTI -->
+      <p class="note">Salin format pesan👇</p>
+      
+      <button class="btn-copy" onclick="copyText()">📋 Copy Format Pesan</button>
+      <button class="btn-channel" onclick="bukaChannel()">📢 Join Saluran</button>
+    </div>
+  </div>
+
+  <!-- POPUP TUTORIAL BAYAR -->
+  <div class="tutorial" id="tutorial">
+    <div class="tutorial-box">
+      <h3>📖 Cara Bayar</h3>
+      <ol>
+        <li>Scan QRIS di atas pakai: <b>DANA</b></li>
+        <li>Masukkan nominal sesuai paket</li>
+        <li>Bayar & <b>Screenshot bukti transfer + cek detail</b></li>
+        <li>Klik "Copy Format Pesan"</li>
+        <li><b>Salin Nomor Admin dan tempel di WhatsApp</b></li>
+        <li><b>Kirim salinan tadi ke Admin</b></li>
+      </ol>
+      <button class="btn-close" onclick="closeTutorial()">Mengerti</button>
+    </div>
+  </div>
+
+<script>
+  let paket = "";
+  
+  // Auto pindah ke menu setelah 1 menit
+  window.addEventListener('load', () => {
+    setTimeout(() => { skipIntro(); }, 60000);
+  });
+
+  function skipIntro() {
+    document.getElementById('intro').classList.add('hide');
+    document.getElementById('menu').classList.add('show');
+    document.body.style.overflow = 'auto';
+  }
+
+  function order(harga, ress) {
+    paket = "Rp " + harga + " → " + ress;
+    document.getElementById('paket').innerText = paket;
+    document.getElementById('tutorial').style.display = 'flex';
+  }
+
+  function closeTutorial() {
+    document.getElementById('tutorial').style.display = 'none';
+    document.getElementById('qris').style.display = 'block';
+  }
+
+  function copyText() {
+    let teks = `Order Baru EX STR REAL\nPaket: ${paket}\n\nSudah bayar via QRIS. Mohon diproses\nLampirkan bukti TF`;
+    navigator.clipboard.writeText(teks);
+    alert("Teks berhasil di copy! \nTinggal buka saluran lalu paste");
+  }
+
+  function copyAdmin() {
+    navigator.clipboard.writeText("081328853561");
+    alert("Nomor Admin 081328853561 berhasil disalin!");
+  }
+
+  function bukaChannel() {
+    window.open("https://whatsapp.com/channel/0029VbCYOPr5fM5h8D582v2e", "_blank");
+  }
+</script>
+</body>
+</html>
